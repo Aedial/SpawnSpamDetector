@@ -1,0 +1,64 @@
+apply from: 'gradle/scripts/helpers.gradle'
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'CurseMaven'
+                url 'https://cursemaven.com'
+            }
+        }
+        filter {
+            includeGroup 'curse.maven'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name 'Modrinth'
+                url 'https://api.modrinth.com/maven'
+            }
+        }
+        filter {
+            includeGroup 'maven.modrinth'
+        }
+    }
+
+    // ECO AE Extension release jars hosted on GitHub
+    ivy {
+        url "https://github.com/sddsd2332/NovaEngineering-ECOAEExtension/releases/download/1.2.0/"
+        patternLayout {
+            artifact "[artifact].[ext]"
+        }
+        metadataSources { artifact() }
+    }
+
+    maven {
+        name = 'BlameJared Maven'
+        url = 'https://maven.blamejared.com'
+    }
+    maven {
+        name = 'GTCEu Maven'
+        url = 'https://maven.gtceu.com'
+    }
+
+    mavenLocal() // Must be last for caching to work
+}
+/**
+ * NOT DEPENDENCIES:
+ *  - runtimeOnly: not required at all for the mod, added for developer convenience to run targets
+ * OPTIONAL DEPENDENCIES:
+ *  - compileOnly: will not be included in developer run targets
+ *  - devOnlyNonPublishable: will be included in developer run targets
+ * REQUIRED DEPENDENCIES:
+ *  - implementation: mods or other jars that are required to be installed alongside this mod
+ */
+dependencies {
+    // Include StripLatestForgeRequirements by default for the dev env
+    runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
+    // Include OSXNarratorBlocker by default for the dev env, for M1+ Macs
+    runtimeOnly 'com.cleanroommc:osxnarratorblocker:1.0'
+
+    // ---- Required dependencies ----
+
+}

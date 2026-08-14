@@ -1,0 +1,36 @@
+## Config
+spawnspamdetector.config.title=Spawn Spam Detector
+spawnspamdetector.config.category.general=General
+spawnspamdetector.config.category.filters=Server Mob Filters
+spawnspamdetector.config.enableDetection=Enable Detection
+spawnspamdetector.config.regionDetectionThreshold=Region Detection Threshold
+spawnspamdetector.config.regionDetectionThresholdPerType=Region Detection Threshold Per Mob Type
+spawnspamdetector.config.globalDetectionThreshold=Global Detection Threshold
+spawnspamdetector.config.globalDetectionThresholdPerType=Global Detection Threshold Per Mob Type
+spawnspamdetector.config.detectionCooldown=Detection Cooldown (in seconds)
+spawnspamdetector.config.whitelistedMobs=Server Whitelisted Mobs
+spawnspamdetector.config.blacklistedMobs=Server Blacklisted Mobs
+
+## User-facing messages
+spawnspamdetector.alert.region.total=Spawn Spam Detector: %s tracked mobs detected in %s.
+spawnspamdetector.alert.region.type=Spawn Spam Detector: %s %s detected in %s.
+spawnspamdetector.alert.global.total=Spawn Spam Detector: %s tracked mobs detected across all loaded regions.
+spawnspamdetector.alert.global.type=Spawn Spam Detector: %s %s detected across all loaded regions.
+spawnspamdetector.alert.topMobs=Top tracked mobs:
+spawnspamdetector.alert.topRegions=Most crowded regions:
+spawnspamdetector.alert.entry.mobCount=- %s x %s
+spawnspamdetector.alert.entry.regionTotal=- %s mobs in %s
+spawnspamdetector.alert.entry.regionType=- %s %s in %s
+spawnspamdetector.alert.command=[Suggest kill command]
+spawnspamdetector.alert.commandPermissionHint=The kill command requires op privileges to run.
+spawnspamdetector.alert.commandDimensionHint=Switch to %s before using the kill command for this alert.
+spawnspamdetector.alert.dimension.label=%s (dimension %s)
+spawnspamdetector.alert.dimension.idOnly=dimension %s
+spawnspamdetector.entity.nameWithId=%s (%s)
+spawnspamdetector.alert.region.label=%s, region [%s, %s], blocks X %s..%s, Z %s..%s
+
+## Command: /spawnspamtop
+spawnspamdetector.command.top.header=Spawn Spam Detector client tracking: %s / %s mobs globally.
+spawnspamdetector.command.top.list=Top 10 tracked mob types (current / global per-type threshold):
+spawnspamdetector.command.top.entry=%s. %s / %s %s
+spawnspamdetector.command.top.empty=No tracked mobs are currently synchronized to this client.
