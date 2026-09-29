@@ -34,3 +34,9 @@ spawnspamdetector.command.top.header=刷怪检测器客户端追踪：全局 %s 
 spawnspamdetector.command.top.list=被追踪生物数量前10名（当前数量 / 全局单类型阈值）：
 spawnspamdetector.command.top.entry=%s. %s / %s %s
 spawnspamdetector.command.top.empty=当前没有被追踪生物同步到此客户端。
+
+## Command: /spawnspamtopchunks
+spawnspamdetector.command.topchunks.header=刷怪检测器：被追踪生物数量最多的10个区块。
+spawnspamdetector.command.topchunks.entry=- %s只生物，位于%s
+spawnspamdetector.command.topchunks.empty=当前没有已加载的被追踪生物。
+spawnspamdetector.command.topchunks.location=%s，区块 §a[%s§a, %s§a]§7 | X: %s..%s, Z: %s..%s
