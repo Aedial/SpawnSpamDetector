@@ -27,7 +27,9 @@ The detection does not run if there is no player to receive it (all remaining pl
 
 ## Client command
 
-Use `/spawnspamtop` to show the top ten mob types in the latest tracking data from the most recent server scan synchronized to your client. The command shows the global total against its threshold and each mob type's current count against the global per-type threshold. It does not request data from the server.
+Use `/spawnspamtop` to show the top ten mob types in the latest tracking data from the most recent server scan synchronized to your client. The command shows the global total against its threshold and each mob type's current count against the global per-type threshold. It does not request data from the server, as the data has already been synchronized.
+
+Use `/spawnspamtopchunks` to show the top ten chunks with the most tracked mobs currently loaded on the server. The command does not use cached data, querying the server directly for the current state. This information is not tracked dynamically and adds no overhead to the normal tracking process.
 
 ## Building
 Run:

@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 
 import com.spawnspamdetector.config.SpawnSpamDetectorConfig;
 import com.spawnspamdetector.network.PacketClientTrackingSettings;
+import com.spawnspamdetector.network.PacketTopTrackedChunksRequest;
 import com.spawnspamdetector.network.SpawnSpamDetectorNetwork;
 
 
@@ -18,6 +19,14 @@ public final class ClientTrackingSync {
         Minecraft minecraft = Minecraft.getMinecraft();
         if (minecraft.getConnection() == null) return;
 
-        SpawnSpamDetectorNetwork.INSTANCE.sendToServer(new PacketClientTrackingSettings(SpawnSpamDetectorConfig.isDetectionEnabled()));
+        SpawnSpamDetectorNetwork.INSTANCE.sendToServer(
+            new PacketClientTrackingSettings(SpawnSpamDetectorConfig.isDetectionEnabled()));
+    }
+
+    public static void requestTopTrackedChunks(int limit) {
+        Minecraft minecraft = Minecraft.getMinecraft();
+        if (minecraft.getConnection() == null) return;
+
+        SpawnSpamDetectorNetwork.INSTANCE.sendToServer(new PacketTopTrackedChunksRequest(limit));
     }
 }

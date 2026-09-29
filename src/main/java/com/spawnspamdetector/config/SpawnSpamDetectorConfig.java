@@ -114,7 +114,7 @@ public final class SpawnSpamDetectorConfig {
         @Config.LangKey(Tags.MODID + ".config.regionDetectionThresholdPerType")
         @Config.Comment("Warn when a single mob type reaches this count inside one region.")
         @Config.RangeInt(min = 1)
-        public int regionDetectionThresholdPerType = 100;
+        public int regionDetectionThresholdPerType = 200;
 
         @Config.Name("globalDetectionThreshold")
         @Config.LangKey(Tags.MODID + ".config.globalDetectionThreshold")
@@ -126,7 +126,7 @@ public final class SpawnSpamDetectorConfig {
         @Config.LangKey(Tags.MODID + ".config.globalDetectionThresholdPerType")
         @Config.Comment("Warn when one mob type reaches this count across loaded regions.")
         @Config.RangeInt(min = 1)
-        public int globalDetectionThresholdPerType = 100;
+        public int globalDetectionThresholdPerType = 200;
 
         @Config.Name("detectionCooldown")
         @Config.LangKey(Tags.MODID + ".config.detectionCooldown")

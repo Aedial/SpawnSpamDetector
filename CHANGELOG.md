@@ -10,4 +10,5 @@ The format is based on Keep a Changelog and this project adheres to Semantic Ver
 
 ## [1.0.0] - ???
 ### Added
-- Implemented the initial Spawn Spam Detector mod scaffold, configuration GUI, and minute-based loaded-world mob scan tracking with region and global alerts.
+- Implement the initial Spawn Spam Detector reporting system, config, and periodic mob scan tracking with region and global alerts.
+- Add `/spawnspamtop` and `/spawnspamtopchunks` client commands for viewing top tracked mobs and most populated chunks.

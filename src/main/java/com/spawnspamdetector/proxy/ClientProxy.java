@@ -7,6 +7,7 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import com.spawnspamdetector.Tags;
+import com.spawnspamdetector.command.TopTrackedChunksCommand;
 import com.spawnspamdetector.command.TopTrackedMobsCommand;
 import com.spawnspamdetector.config.SpawnSpamDetectorConfig;
 import com.spawnspamdetector.tracking.SpawnEventHandler;
@@ -23,5 +24,6 @@ public class ClientProxy extends CommonProxy {
 
         MinecraftForge.EVENT_BUS.register(new SpawnEventHandler());
         ClientCommandHandler.instance.registerCommand(new TopTrackedMobsCommand());
+        ClientCommandHandler.instance.registerCommand(new TopTrackedChunksCommand());
     }
 }

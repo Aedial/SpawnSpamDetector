@@ -1,9 +1,11 @@
 package com.spawnspamdetector.tracking;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -14,6 +16,11 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
 
 import com.spawnspamdetector.SpawnSpamDetector;
@@ -24,7 +31,7 @@ import com.spawnspamdetector.network.SpawnSpamDetectorNetwork;
 
 
 /**
- * Server-authoritative, scan-driven mob counter.
+ * Server-authoritative mob counter.
  *
  * <p>
  * The manager has two layers of state:
@@ -169,6 +176,54 @@ public final class ServerTrackingManager {
         activeServer = null;
         serverTickCounter = 0L;
         nextScanTick = 0L;
+    }
+
+    /**
+     * Scans loaded entities in the loaded chunks, with no persistence,
+     * and sends a summary to the specified player.
+     */
+    public static void printTopTrackedChunks(EntityPlayerMP player, int limit) {
+        if (player == null || player.getServer() == null) return;
+
+        Map<ChunkLocation, Integer> chunkCounts = new HashMap<>();
+        TrackedMobFilter filter = SpawnSpamDetectorConfig.getTrackingFilterKey().createFilter();
+
+        for (WorldServer world : player.getServer().worlds) {
+            if (world == null) continue;
+
+            for (Entity entity : world.loadedEntityList) {
+                ResourceLocation mobId = resolveTrackedMobId(entity);
+                if (mobId == null || !filter.matches(mobId)) continue;
+
+                ChunkLocation location = new ChunkLocation(
+                    world.provider.getDimension(),
+                    MathHelper.floor(entity.posX) >> 4,
+                    MathHelper.floor(entity.posZ) >> 4
+                );
+                chunkCounts.merge(location, 1, Integer::sum);
+            }
+        }
+
+        List<ChunkCount> topChunks = getTopChunks(chunkCounts, limit);
+        player.sendMessage(styleSummary(
+            new TextComponentTranslation("spawnspamdetector.command.topchunks.header")));
+
+        if (topChunks.isEmpty()) {
+            player.sendMessage(styleDetail(
+                new TextComponentTranslation("spawnspamdetector.command.topchunks.empty")));
+            return;
+        }
+
+        // TODO: Add a journeymap waypoint link to the chunk location, if possible
+        for (ChunkCount chunkCount : topChunks) {
+            player.sendMessage(styleDetail(new TextComponentTranslation(
+                "spawnspamdetector.command.topchunks.entry",
+                createColoredValueComponent(chunkCount.count, TextFormatting.AQUA),
+                createChunkComponent(player, chunkCount.location)
+            )));
+        }
+
+        player.sendMessage(new TextComponentString(""));
     }
 
     /**
@@ -351,6 +406,71 @@ public final class ServerTrackingManager {
         if (!(entity instanceof EntityLiving)) return null;
 
         return EntityList.getKey(entity);
+    }
+
+    private static List<ChunkCount> getTopChunks(Map<ChunkLocation, Integer> chunkCounts, int limit) {
+        List<ChunkCount> topChunks = new ArrayList<>(chunkCounts.size());
+
+        for (Map.Entry<ChunkLocation, Integer> entry : chunkCounts.entrySet()) {
+            topChunks.add(new ChunkCount(entry.getKey(), entry.getValue()));
+        }
+
+        topChunks.sort((first, second) -> {
+            int countComparison = Integer.compare(second.count, first.count);
+            if (countComparison != 0) return countComparison;
+
+            int dimensionComparison = Integer.compare(first.location.dimensionId, second.location.dimensionId);
+            if (dimensionComparison != 0) return dimensionComparison;
+
+            int chunkXComparison = Integer.compare(first.location.chunkX, second.location.chunkX);
+            if (chunkXComparison != 0) return chunkXComparison;
+
+            return Integer.compare(first.location.chunkZ, second.location.chunkZ);
+        });
+
+        return topChunks.subList(0, Math.min(limit, topChunks.size()));
+    }
+
+    private static ITextComponent createChunkComponent(EntityPlayerMP player, ChunkLocation location) {
+        int minX = location.chunkX << 4;
+        int minZ = location.chunkZ << 4;
+        return new TextComponentTranslation(
+            "spawnspamdetector.command.topchunks.location",
+            createDimensionComponent(player, location.dimensionId),
+            createColoredValueComponent(location.chunkX, TextFormatting.GREEN),
+            createColoredValueComponent(location.chunkZ, TextFormatting.GREEN),
+            minX,
+            minX + 15,
+            minZ,
+            minZ + 15
+        );
+    }
+
+    private static ITextComponent createDimensionComponent(EntityPlayerMP player, int dimensionId) {
+        WorldServer world = player.getServer().getWorld(dimensionId);
+        if (world == null) return new TextComponentTranslation("spawnspamdetector.alert.dimension.idOnly", dimensionId);
+
+        return new TextComponentTranslation(
+            "spawnspamdetector.alert.dimension.label",
+            world.provider.getDimensionType().getName(),
+            dimensionId
+        );
+    }
+
+    private static ITextComponent createColoredValueComponent(Object value, TextFormatting color) {
+        TextComponentString component = new TextComponentString(String.valueOf(value));
+        component.getStyle().setColor(color);
+        return component;
+    }
+
+    private static ITextComponent styleSummary(ITextComponent component) {
+        component.getStyle().setColor(TextFormatting.GOLD);
+        return component;
+    }
+
+    private static ITextComponent styleDetail(ITextComponent component) {
+        component.getStyle().setColor(TextFormatting.GRAY);
+        return component;
     }
 
     /**
@@ -752,6 +872,47 @@ public final class ServerTrackingManager {
             if (totalCount != other.totalCount) return false;
 
             return mobCounts.equals(other.mobCounts);
+        }
+    }
+
+    private static final class ChunkLocation {
+
+        private final int dimensionId;
+        private final int chunkX;
+        private final int chunkZ;
+
+        private ChunkLocation(int dimensionId, int chunkX, int chunkZ) {
+            this.dimensionId = dimensionId;
+            this.chunkX = chunkX;
+            this.chunkZ = chunkZ;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) return true;
+            if (!(other instanceof ChunkLocation)) return false;
+
+            ChunkLocation location = (ChunkLocation) other;
+            return dimensionId == location.dimensionId && chunkX == location.chunkX && chunkZ == location.chunkZ;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = dimensionId;
+            result = 31 * result + chunkX;
+            result = 31 * result + chunkZ;
+            return result;
+        }
+    }
+
+    private static final class ChunkCount {
+
+        private final ChunkLocation location;
+        private final int count;
+
+        private ChunkCount(ChunkLocation location, int count) {
+            this.location = location;
+            this.count = count;
         }
     }
 }

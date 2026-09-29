@@ -34,3 +34,9 @@ spawnspamdetector.command.top.header=Spawn Spam Detector client tracking: %s / %
 spawnspamdetector.command.top.list=Top 10 tracked mob types (current / global per-type threshold):
 spawnspamdetector.command.top.entry=%s. %s / %s %s
 spawnspamdetector.command.top.empty=No tracked mobs are currently synchronized to this client.
+
+## Command: /spawnspamtopchunks
+spawnspamdetector.command.topchunks.header=Spawn Spam Detector: 10 most populated chunks by tracked mobs.
+spawnspamdetector.command.topchunks.entry=- %s mobs in %s
+spawnspamdetector.command.topchunks.empty=No tracked mobs are currently loaded.
+spawnspamdetector.command.topchunks.location=%s, chunk §a[%s§a, %s§a]§7 | X: %s..%s, Z: %s..%s

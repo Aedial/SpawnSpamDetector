@@ -24,6 +24,7 @@ public final class SpawnSpamDetectorNetwork {
         INSTANCE.registerMessage(PacketClientTrackingSettings.Handler.class, PacketClientTrackingSettings.class, packetId++, Side.SERVER);
         INSTANCE.registerMessage(PacketTrackingSnapshot.ClientHandler.class, PacketTrackingSnapshot.class, packetId++, Side.CLIENT);
         INSTANCE.registerMessage(PacketTrackingDelta.ClientHandler.class, PacketTrackingDelta.class, packetId++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketTopTrackedChunksRequest.Handler.class, PacketTopTrackedChunksRequest.class, packetId++, Side.SERVER);
 
         initialized = true;
     }
