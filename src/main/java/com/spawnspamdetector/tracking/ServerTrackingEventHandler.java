@@ -13,7 +13,7 @@ public class ServerTrackingEventHandler {
     public void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
         if (!(event.player instanceof EntityPlayerMP)) return;
 
-        ServerTrackingManager.removeClient(((EntityPlayerMP) event.player).getServer(), event.player.getUniqueID());
+        ServerTrackingManager.removeClient(event.player.getServer(), event.player.getUniqueID());
     }
 
     @SubscribeEvent

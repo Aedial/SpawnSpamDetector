@@ -53,6 +53,10 @@ import com.spawnspamdetector.network.SpawnSpamDetectorNetwork;
  */
 public final class ServerTrackingManager {
 
+    public static final String TOP_CHUNKS_ENTRY_KEY = "spawnspamdetector.command.topchunks.entry";
+    public static final String TOP_CHUNKS_LOCATION_KEY = "spawnspamdetector.command.topchunks.location";
+
+
     /** Ticks between full tracking scans while at least one client is subscribed. */
     private static final int TRACKING_SCAN_INTERVAL_TICKS = 20 * 60;
 
@@ -193,7 +197,7 @@ public final class ServerTrackingManager {
 
             for (Entity entity : world.loadedEntityList) {
                 ResourceLocation mobId = resolveTrackedMobId(entity);
-                if (mobId == null || !filter.matches(mobId)) continue;
+                if (!filter.matches(mobId)) continue;
 
                 ChunkLocation location = new ChunkLocation(
                     world.provider.getDimension(),
@@ -214,10 +218,8 @@ public final class ServerTrackingManager {
             return;
         }
 
-        // TODO: Add a journeymap waypoint link to the chunk location, if possible
         for (ChunkCount chunkCount : topChunks) {
-            player.sendMessage(styleDetail(new TextComponentTranslation(
-                "spawnspamdetector.command.topchunks.entry",
+            player.sendMessage(styleDetail(new TextComponentTranslation(TOP_CHUNKS_ENTRY_KEY,
                 createColoredValueComponent(chunkCount.count, TextFormatting.AQUA),
                 createChunkComponent(player, chunkCount.location)
             )));
@@ -434,11 +436,9 @@ public final class ServerTrackingManager {
     private static ITextComponent createChunkComponent(EntityPlayerMP player, ChunkLocation location) {
         int minX = location.chunkX << 4;
         int minZ = location.chunkZ << 4;
-        return new TextComponentTranslation(
-            "spawnspamdetector.command.topchunks.location",
+        return new TextComponentTranslation(TOP_CHUNKS_LOCATION_KEY,
             createDimensionComponent(player, location.dimensionId),
-            createColoredValueComponent(location.chunkX, TextFormatting.GREEN),
-            createColoredValueComponent(location.chunkZ, TextFormatting.GREEN),
+            createChunkCoordinatesComponent(location),
             minX,
             minX + 15,
             minZ,
@@ -446,9 +446,12 @@ public final class ServerTrackingManager {
         );
     }
 
+    private static ITextComponent createChunkCoordinatesComponent(ChunkLocation location) {
+        return createColoredValueComponent("[" + location.chunkX + ", " + location.chunkZ + "]", TextFormatting.GREEN);
+    }
+
     private static ITextComponent createDimensionComponent(EntityPlayerMP player, int dimensionId) {
         WorldServer world = player.getServer().getWorld(dimensionId);
-        if (world == null) return new TextComponentTranslation("spawnspamdetector.alert.dimension.idOnly", dimensionId);
 
         return new TextComponentTranslation(
             "spawnspamdetector.alert.dimension.label",
@@ -833,9 +836,8 @@ public final class ServerTrackingManager {
 
         private String resolveDimensionName(MinecraftServer server, int dimensionId) {
             WorldServer world = server.getWorld(dimensionId);
-            if (world != null) return world.provider.getDimensionType().getName();
+            return world.provider.getDimensionType().getName();
 
-            return "";
         }
     }
 

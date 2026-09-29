@@ -281,13 +281,11 @@ public final class SpawnTrackerManager {
         List<ITextComponent> lines = new ArrayList<>();
         lines.add(styleDetail(new TextComponentTranslation("spawnspamdetector.alert.topMobs")));
 
-        for (int index = 0; index < topMobs.size(); index++) {
-            Map.Entry<ResourceLocation, Integer> entry = topMobs.get(index);
+        for (Map.Entry<ResourceLocation, Integer> entry : topMobs) {
             lines.add(styleDetail(new TextComponentTranslation(
                 "spawnspamdetector.alert.entry.mobCount",
                 entry.getValue(),
-                createMobNameComponent(entry.getKey())
-            )));
+                createMobNameComponent(entry.getKey()))));
         }
 
         return lines;
