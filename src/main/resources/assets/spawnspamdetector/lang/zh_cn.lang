@@ -40,3 +40,4 @@ spawnspamdetector.command.topchunks.header=刷怪检测器：被追踪生物数�
 spawnspamdetector.command.topchunks.entry=- %s只生物，位于%s
 spawnspamdetector.command.topchunks.empty=当前没有已加载的被追踪生物。
 spawnspamdetector.command.topchunks.location=%s，区块 %s | X: %s..%s, Z: %s..%s
+spawnspamdetector.command.topchunks.openWaypoint=创建旅行地图路径点
